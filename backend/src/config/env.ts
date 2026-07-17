@@ -16,6 +16,7 @@ export const env = Object.freeze({
   jwtSecret: process.env.JWT_SECRET || 'development-only-change-me',
   jwtAccessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m',
   jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+  accessCookieName: process.env.ACCESS_COOKIE_NAME || 'task_access_token',
   refreshCookieName: process.env.REFRESH_COOKIE_NAME || 'task_refresh_token',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
   logToFile: process.env.LOG_TO_FILE === 'true',

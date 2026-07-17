@@ -31,7 +31,7 @@ describe('Authentication API', () => {
     });
 
     assert.equal(response.status, 201);
-    assert.ok(response.body.accessToken);
+    assert.ok(response.headers['set-cookie']);
     assert.equal(response.body.user.email, 'test@example.com');
     assert.equal(response.body.user.password, undefined);
   });
@@ -65,7 +65,7 @@ describe('Authentication API', () => {
     });
 
     assert.equal(validResponse.status, 200);
-    assert.ok(validResponse.body.accessToken);
+    assert.ok(validResponse.headers['set-cookie']);
     assert.equal(invalidResponse.status, 401);
   });
 
@@ -78,9 +78,12 @@ describe('Authentication API', () => {
       email: 'test@example.com',
       password: 'secure-password'
     });
+    const accessCookie = registration.headers['set-cookie']?.find((cookie) =>
+      cookie.startsWith('task_access_token=')
+    );
     const authorized = await request(app)
       .get('/api/auth/me')
-      .set('Authorization', `Bearer ${registration.body.accessToken}`);
+      .set('Cookie', accessCookie || '');
 
     assert.equal(authorized.status, 200);
     assert.equal(authorized.body.user.email, 'test@example.com');

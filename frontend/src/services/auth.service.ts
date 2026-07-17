@@ -7,3 +7,9 @@ export const registerUser = (input: RegisterInput) =>
 
 export const loginUser = (input: LoginInput) =>
   axiosClient.post<AuthResponse>(ENDPOINTS.auth.login, input);
+
+export const getCurrentUser = () =>
+  axiosClient.get<{ user: AuthResponse['user'] }>(ENDPOINTS.auth.me);
+
+export const logoutUser = () =>
+  axiosClient.post(ENDPOINTS.auth.logout);

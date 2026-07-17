@@ -25,7 +25,7 @@ export default function AuthPage({ mode }: AuthPageProps) {
       } else {
         await login({ email, password });
       }
-      navigate('/');
+      navigate('/dashboard', { replace: true });
     } catch {
       // The hook exposes the API error for the form.
     }

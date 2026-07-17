@@ -40,9 +40,7 @@ vite.config.d.ts
 .DS_Store
 Thumbs.db
 
-# Local planning notes (must not be committed)
-sprint.md
-**/sprint.md
+
 
 # Test artifacts and local databases
 *.sqlite

@@ -19,7 +19,11 @@ export interface SafeUser {
 
 export interface AuthData {
   user: SafeUser;
+}
+
+export interface AuthSessionData extends AuthData {
   accessToken: string;
+  refreshToken: string;
 }
 
 export interface SessionMetadata {

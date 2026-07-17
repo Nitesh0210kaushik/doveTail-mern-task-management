@@ -13,6 +13,6 @@ export default function ProtectedRoute() {
       .finally(() => setChecking(false));
   }, []);
 
-  if (checking) return <div className="flex min-h-screen items-center justify-center">Checking session...</div>;
+  if (checking) return <div className="flex min-h-screen items-center justify-center text-sm text-slate-500">Loading...</div>;
   return authenticated ? <Outlet /> : <Navigate to="/login" replace />;
 }

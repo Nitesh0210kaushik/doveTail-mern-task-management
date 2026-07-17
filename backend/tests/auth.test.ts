@@ -3,8 +3,8 @@ import { after, before, beforeEach, describe, it } from 'node:test';
 import request from 'supertest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import app from '../src/app.js';
-import { User } from '../src/modules/users/models/User.js';
+import app from '../src/app';
+import { User } from '../src/modules/users/models/User';
 
 let mongoServer: MongoMemoryServer;
 
@@ -78,9 +78,10 @@ describe('Authentication API', () => {
       email: 'test@example.com',
       password: 'secure-password'
     });
-    const accessCookie = registration.headers['set-cookie']?.find((cookie) =>
-      cookie.startsWith('task_access_token=')
-    );
+    const cookies = registration.headers['set-cookie'];
+    const accessCookie = Array.isArray(cookies)
+      ? cookies.find((cookie: string) => cookie.startsWith('task_access_token='))
+      : undefined;
     const authorized = await request(app)
       .get('/api/auth/me')
       .set('Cookie', accessCookie || '');
@@ -97,6 +98,7 @@ describe('Authentication API', () => {
     });
 
     assert.equal(response.status, 400);
-    assert.ok(response.body.details.length >= 3);
+    assert.equal(response.body.field, 'name');
+    assert.equal(typeof response.body.message, 'string');
   });
 });

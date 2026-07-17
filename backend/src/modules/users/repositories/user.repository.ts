@@ -1,5 +1,5 @@
-import { User } from '../models/User.js';
-import type { UserDocument } from '../types/user.types.js';
+import { User } from '../models/User';
+import type { UserDocument } from '../types/user.types';
 
 export const userRepository = {
   findByEmail(email: string): Promise<UserDocument | null> {

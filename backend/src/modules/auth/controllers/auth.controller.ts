@@ -1,11 +1,12 @@
 import type { ParamsDictionary } from 'express-serve-static-core';
 import type { Request, Response } from 'express';
-import { asyncHandler } from '../../../utils/asyncHandler.js';
-import { getCurrentUser, loginUser, registerUser } from '../services/auth.service.js';
-import { logoutUser, refreshUserSession } from '../services/auth.service.js';
-import { env } from '../../../config/env.js';
-import { ApiError } from '../../../utils/ApiError.js';
-import type { AuthData, AuthSessionData, LoginRequest, RegisterRequest, SafeUser } from '../types/auth.types.js';
+import { asyncHandler } from '../../../utils/asyncHandler';
+import { getCurrentUser, loginUser, registerUser } from '../services/auth.service';
+import { logoutUser, refreshUserSession } from '../services/auth.service';
+import { env } from '../../../config/env';
+import { ApiError } from '../../../utils/ApiError';
+import type { AuthData, AuthSessionData, LoginRequest, RegisterRequest, SafeUser } from '../types/auth.types';
+import { StatusCodes } from 'http-status-codes';
 
 const setAuthCookies = (res: Response, accessToken: string, refreshToken: string): void => {
   const cookieOptions = {
@@ -26,7 +27,7 @@ export const register = asyncHandler(async (
 ) => {
   const result = await registerUser(req.body, { userAgent: req.get('user-agent'), ipAddress: req.ip });
   setAuthCookies(res, result.accessToken, result.refreshToken);
-  res.status(201).json({ user: result.user });
+  res.status(StatusCodes.CREATED).json({ user: result.user });
 });
 
 export const login = asyncHandler(async (
@@ -35,7 +36,7 @@ export const login = asyncHandler(async (
 ) => {
   const result = await loginUser(req.body, { userAgent: req.get('user-agent'), ipAddress: req.ip });
   setAuthCookies(res, result.accessToken, result.refreshToken);
-  res.status(200).json({ user: result.user });
+  res.status(StatusCodes.OK).json({ user: result.user });
 });
 
 export const me = asyncHandler(async (
@@ -44,15 +45,15 @@ export const me = asyncHandler(async (
 ) => {
   if (!req.user) throw new Error('Authenticated user is missing');
   const user = await getCurrentUser(req.user._id.toString());
-  res.status(200).json({ user });
+  res.status(StatusCodes.OK).json({ user });
 });
 
 export const refresh = asyncHandler(async (req: Request, res: Response<AuthData>) => {
   const refreshToken = req.cookies?.[env.refreshCookieName];
-  if (!refreshToken) throw new ApiError(401, 'Refresh token is required');
+  if (!refreshToken) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Refresh token is required');
   const result = await refreshUserSession(refreshToken);
   setAuthCookies(res, result.accessToken, result.refreshToken);
-  res.status(200).json({ user: result.user });
+  res.status(StatusCodes.OK).json({ user: result.user });
 });
 
 export const logout = asyncHandler(async (req, res) => {
@@ -60,5 +61,5 @@ export const logout = asyncHandler(async (req, res) => {
   if (refreshToken) await logoutUser(refreshToken);
   res.clearCookie(env.accessCookieName);
   res.clearCookie(env.refreshCookieName);
-  res.status(204).send();
+  res.status(StatusCodes.NO_CONTENT).send();
 });

@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
-import type { UserDocument } from '../types/user.types.js';
+import type { UserDocument } from '../types/user.types';
 
 const userSchema = new mongoose.Schema<UserDocument>(
   {

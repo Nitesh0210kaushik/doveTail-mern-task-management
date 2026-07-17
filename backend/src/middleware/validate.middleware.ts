@@ -1,5 +1,6 @@
 import { validationResult } from 'express-validator';
-import { ApiError } from '../utils/ApiError.js';
+import { StatusCodes } from 'http-status-codes';
+import { ApiError } from '../utils/ApiError';
 
 export const validate: RequestHandler = (req, _res, next): void => {
   const errors = validationResult(req);
@@ -8,7 +9,7 @@ export const validate: RequestHandler = (req, _res, next): void => {
       field: 'path' in error ? error.path : 'unknown',
       message: error.msg
     }));
-    return next(new ApiError(400, 'Request validation failed', details));
+    return next(new ApiError(StatusCodes.BAD_REQUEST, 'Request validation failed', details));
   }
   next();
 };

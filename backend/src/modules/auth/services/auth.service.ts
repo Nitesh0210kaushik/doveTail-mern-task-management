@@ -1,9 +1,10 @@
-import { userRepository } from '../../users/repositories/user.repository.js';
-import { ApiError } from '../../../utils/ApiError.js';
-import { signAccessToken, createRefreshToken, hashRefreshToken } from '../../../utils/jwt.js';
-import { sessionRepository } from '../repositories/session.repository.js';
-import type { AuthSessionData, LoginRequest, RegisterRequest, SafeUser, SessionMetadata } from '../types/auth.types.js';
-import type { UserDocument } from '../../users/types/user.types.js';
+import { userRepository } from '../../users/repositories/user.repository';
+import { ApiError } from '../../../utils/ApiError';
+import { signAccessToken, createRefreshToken, hashRefreshToken } from '../../../utils/jwt';
+import { sessionRepository } from '../repositories/session.repository';
+import type { AuthSessionData, LoginRequest, RegisterRequest, SafeUser, SessionMetadata } from '../types/auth.types';
+import type { UserDocument } from '../../users/types/user.types';
+import { StatusCodes } from 'http-status-codes';
 
 const toSafeUser = (user: UserDocument): SafeUser => ({
   id: user._id.toString(),
@@ -26,7 +27,7 @@ export const registerUser = async (
 ): Promise<AuthSessionData> => {
   const normalizedEmail = email.toLowerCase().trim();
   const existingUser = await userRepository.findByEmail(normalizedEmail);
-  if (existingUser) throw new ApiError(409, 'An account with this email already exists');
+  if (existingUser) throw new ApiError(StatusCodes.CONFLICT, 'An account with this email already exists');
 
   const user = await userRepository.create({ name, email: normalizedEmail, password });
   return createAuthSession(user, metadata);
@@ -38,16 +39,16 @@ export const loginUser = async (
 ): Promise<AuthSessionData> => {
   const user = await userRepository.findByEmailWithPassword(email.toLowerCase().trim());
   if (!user || !(await user.comparePassword(password))) {
-    throw new ApiError(401, 'Invalid email or password');
+    throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
   }
   return createAuthSession(user, metadata);
 };
 
 export const refreshUserSession = async (refreshToken: string): Promise<AuthSessionData> => {
   const session = await sessionRepository.findActiveByHash(hashRefreshToken(refreshToken));
-  if (!session) throw new ApiError(401, 'Invalid or expired refresh token');
+  if (!session) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid or expired refresh token');
   const user = await userRepository.findById(session.user.toString());
-  if (!user) throw new ApiError(401, 'User account no longer exists');
+  if (!user) throw new ApiError(StatusCodes.UNAUTHORIZED, 'User account no longer exists');
   const nextRefreshToken = createRefreshToken();
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   await sessionRepository.rotate(session._id.toString(), hashRefreshToken(nextRefreshToken), expiresAt);
@@ -60,6 +61,6 @@ export const logoutUser = async (refreshToken: string): Promise<void> => {
 
 export const getCurrentUser = async (userId: string): Promise<SafeUser> => {
   const user = await userRepository.findById(userId);
-  if (!user) throw new ApiError(401, 'User account no longer exists');
+  if (!user) throw new ApiError(StatusCodes.UNAUTHORIZED, 'User account no longer exists');
   return toSafeUser(user);
 };

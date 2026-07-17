@@ -1,7 +1,7 @@
-import app from './app.js';
-import { connectDatabase } from './config/database.js';
-import { env } from './config/env.js';
-import { logger } from './config/logger.js';
+import app from './app';
+import { connectDatabase, disconnectDatabase } from './config/database';
+import { env } from './config/env';
+import { logger } from './config/logger';
 
 const startServer = async () => {
   await connectDatabase();
@@ -12,7 +12,6 @@ const startServer = async () => {
   const shutdown = async (signal: string): Promise<void> => {
     logger.info(`${signal} received, shutting down`);
     server.close(async () => {
-      const { disconnectDatabase } = await import('./config/database.js');
       await disconnectDatabase();
       process.exit(0);
     });

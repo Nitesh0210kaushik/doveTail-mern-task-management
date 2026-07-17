@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import winston from 'winston';
-import { env } from './env.js';
+import { env } from './env';
 
 type LogMeta = Record<string, unknown>;
 type LogInput = string | LogMeta;

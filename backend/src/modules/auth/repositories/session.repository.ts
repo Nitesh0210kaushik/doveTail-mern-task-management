@@ -1,5 +1,5 @@
-import { Session } from '../models/Session.js';
-import type { SessionMetadata } from '../types/auth.types.js';
+import { Session } from '../models/Session';
+import type { SessionMetadata } from '../types/auth.types';
 
 export const sessionRepository = {
   create(userId: string, refreshTokenHash: string, expiresAt: Date, metadata: SessionMetadata) {

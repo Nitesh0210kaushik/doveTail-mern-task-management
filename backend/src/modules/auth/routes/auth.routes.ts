@@ -4,13 +4,15 @@ import { authenticate } from '../../../middleware/auth.middleware';
 import { validate } from '../../../middleware/validate.middleware';
 import { loginValidator, registerValidator } from '../validations/auth.validators';
 import { authRateLimiter } from '../../../middleware/rateLimit.middleware';
+import { verifyCsrfToken } from '../../../middleware/csrf.middleware';
 
 const router = Router();
 
-router.post('/register', authRateLimiter, registerValidator, validate, register);
-router.post('/login', authRateLimiter, loginValidator, validate, login);
+router.get('/csrf', (_req, res) => res.status(200).json({ message: 'CSRF token issued' }));
+router.post('/register', authRateLimiter, verifyCsrfToken, registerValidator, validate, register);
+router.post('/login', authRateLimiter, verifyCsrfToken, loginValidator, validate, login);
 router.get('/me', authenticate, me);
-router.post('/refresh', authRateLimiter, refresh);
-router.post('/logout', logout);
+router.post('/refresh', authRateLimiter, verifyCsrfToken, refresh);
+router.post('/logout', verifyCsrfToken, logout);
 
 export default router;

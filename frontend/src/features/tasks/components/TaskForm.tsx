@@ -49,13 +49,13 @@ export default function TaskForm({ task, saving = false, onSubmit, onCancel }: T
       <div className="grid gap-4 sm:grid-cols-3">
         <label className="block">
           <span className="mb-2 block text-sm font-medium text-slate-700">Status</span>
-          <select className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" value={status} onChange={(event) => setStatus(event.target.value as TaskInput['status'])}>
+          <select className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100" value={status} onChange={(event) => setStatus(event.target.value as TaskInput['status'])}>
             {TASK_STATUSES.map((value) => <option key={value}>{value}</option>)}
           </select>
         </label>
         <label className="block">
           <span className="mb-2 block text-sm font-medium text-slate-700">Priority</span>
-          <select className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" value={priority} onChange={(event) => setPriority(event.target.value as TaskInput['priority'])}>
+          <select className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100" value={priority} onChange={(event) => setPriority(event.target.value as TaskInput['priority'])}>
             {TASK_PRIORITIES.map((value) => <option key={value}>{value}</option>)}
           </select>
         </label>

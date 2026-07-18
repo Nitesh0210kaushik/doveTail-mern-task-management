@@ -1,3 +1,5 @@
+import type { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
+import mongoose from 'mongoose';
 import { env } from '../config/env';
 import { ApiError } from '../utils/ApiError';
 import { logger } from '../config/logger';
@@ -52,5 +54,3 @@ export const errorHandler: ErrorRequestHandler = (error: unknown, _req, res, _ne
   if (env.nodeEnv !== 'production' && statusCode >= 500) response.stack = typedError.stack;
   res.status(statusCode).json(response);
 };
-import type { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
-import mongoose from 'mongoose';

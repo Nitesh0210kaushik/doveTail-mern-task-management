@@ -10,6 +10,8 @@ import { errorHandler, notFound } from './middleware/error.middleware';
 import { logger } from './config/logger';
 import { apiRateLimiter } from './middleware/rateLimit.middleware';
 import { StatusCodes } from 'http-status-codes';
+import { requestSecurity } from './middleware/requestSecurity.middleware';
+import { issueCsrfToken } from './middleware/csrf.middleware';
 
 const app = express();
 
@@ -18,6 +20,8 @@ app.use(helmet());
 app.use(cors({ origin: env.clientUrl, credentials: true }));
 app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
+app.use(requestSecurity);
+app.use(issueCsrfToken);
 app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev', {
   stream: { write: (message: string) => logger.info(message.trim()) }
 }));

@@ -11,6 +11,24 @@ export const axiosClient = axios.create({
   }
 });
 
+const csrfCookieName = 'task_csrf_token';
+const unsafeMethods = new Set(['post', 'put', 'patch', 'delete']);
+
+const getCookieValue = (name: string): string | undefined => {
+  const cookie = document.cookie
+    .split('; ')
+    .find((value) => value.startsWith(`${name}=`));
+  return cookie ? decodeURIComponent(cookie.slice(name.length + 1)) : undefined;
+};
+
+axiosClient.interceptors.request.use((request) => {
+  if (unsafeMethods.has((request.method || 'get').toLowerCase())) {
+    const csrfToken = getCookieValue(csrfCookieName);
+    if (csrfToken) request.headers.set('X-CSRF-Token', csrfToken);
+  }
+  return request;
+});
+
 type RetryableRequestConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
 axiosClient.interceptors.response.use(
@@ -18,10 +36,11 @@ axiosClient.interceptors.response.use(
   async (error: AxiosError) => {
     const request = error.config as RetryableRequestConfig | undefined;
     const isRefreshRequest = request?.url?.includes(ENDPOINTS.auth.refresh);
+    const isSessionRequest = request?.url?.includes(ENDPOINTS.auth.me);
     const isAuthRequest = request?.url?.includes(ENDPOINTS.auth.login)
       || request?.url?.includes(ENDPOINTS.auth.register);
 
-    if (error.response?.status !== 401 || !request || request._retry || isRefreshRequest || isAuthRequest) {
+    if (error.response?.status !== 401 || !request || request._retry || isRefreshRequest || isSessionRequest || isAuthRequest) {
       return Promise.reject(error);
     }
 
@@ -30,11 +49,7 @@ axiosClient.interceptors.response.use(
       await axiosClient.post(ENDPOINTS.auth.refresh);
       return axiosClient(request);
     } catch {
-      try {
-        await axiosClient.post(ENDPOINTS.auth.logout);
-      } catch {
-        // The server may be unreachable, but the client must still leave the protected view.
-      }
+      await axiosClient.post(ENDPOINTS.auth.logout).catch(() => undefined);
 
       if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
         window.location.assign('/login');

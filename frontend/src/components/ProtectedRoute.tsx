@@ -1,18 +1,9 @@
-import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { getCurrentUser } from '../services/auth.service';
+import { useCurrentUser } from '../hooks/auth/useCurrentUser';
 
 export default function ProtectedRoute() {
-  const [checking, setChecking] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
+  const { isLoading, isSuccess } = useCurrentUser();
 
-  useEffect(() => {
-    getCurrentUser()
-      .then(() => setAuthenticated(true))
-      .catch(() => setAuthenticated(false))
-      .finally(() => setChecking(false));
-  }, []);
-
-  if (checking) return <div className="flex min-h-screen items-center justify-center text-sm text-slate-500">Loading...</div>;
-  return authenticated ? <Outlet /> : <Navigate to="/login" replace />;
+  if (isLoading) return <div className="flex min-h-screen items-center justify-center text-sm text-slate-500">Loading...</div>;
+  return isSuccess ? <Outlet /> : <Navigate to="/login" replace />;
 }

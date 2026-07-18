@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { Task, type TaskDocument } from '../models/Task';
 import type { CreateTaskInput, TaskQuery, UpdateTaskInput } from '../types/task.types';
 
-const escapeRegex = (value: string): string => value.replace(/[\^$.*+?()[\]{}|]/g, '\\$&');
+const escapeRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export const taskRepository = {
   create(userId: string, input: CreateTaskInput): Promise<TaskDocument> {
@@ -10,11 +10,11 @@ export const taskRepository = {
   },
 
   findByIdForUser(taskId: string, userId: string): Promise<TaskDocument | null> {
-    return Task.findOne({ _id: taskId, user: userId });
+    return Task.findOne({ _id: taskId, user: userId, isDeleted: { $ne: true } });
   },
 
   async findAllForUser(userId: string, query: TaskQuery): Promise<{ tasks: TaskDocument[]; totalRecords: number }> {
-    const filter: Record<string, unknown> = { user: new Types.ObjectId(userId) };
+    const filter: Record<string, unknown> = { user: new Types.ObjectId(userId), isDeleted: { $ne: true } };
     if (query.search) filter.title = { $regex: escapeRegex(query.search), $options: 'i' };
     if (query.status) filter.status = query.status;
     if (query.priority) filter.priority = query.priority;
@@ -31,10 +31,14 @@ export const taskRepository = {
   },
 
   update(taskId: string, userId: string, input: UpdateTaskInput): Promise<TaskDocument | null> {
-    return Task.findOneAndUpdate({ _id: taskId, user: userId }, input, { new: true, runValidators: true });
+    return Task.findOneAndUpdate({ _id: taskId, user: userId, isDeleted: { $ne: true } }, input, { new: true, runValidators: true });
   },
 
   delete(taskId: string, userId: string): Promise<TaskDocument | null> {
-    return Task.findOneAndDelete({ _id: taskId, user: userId });
+    return Task.findOneAndUpdate(
+      { _id: taskId, user: userId, isDeleted: { $ne: true } },
+      { $set: { isDeleted: true } },
+      { new: true }
+    );
   }
 };

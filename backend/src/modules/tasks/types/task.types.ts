@@ -1,9 +1,6 @@
-export const TASK_STATUSES = ['Pending', 'In Progress', 'Completed'] as const;
-export const TASK_PRIORITIES = ['Low', 'Medium', 'High'] as const;
+import type { TaskPriority, TaskSortField, TaskStatus } from '../../../constants/task.constants';
 
-export type TaskStatus = (typeof TASK_STATUSES)[number];
-export type TaskPriority = (typeof TASK_PRIORITIES)[number];
-export type TaskSortField = 'dueDate' | 'createdAt';
+export type { TaskPriority, TaskSortField, TaskStatus } from '../../../constants/task.constants';
 export type SortOrder = 'asc' | 'desc';
 
 export interface CreateTaskInput {

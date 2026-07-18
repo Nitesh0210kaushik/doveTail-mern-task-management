@@ -18,6 +18,7 @@ export const env = Object.freeze({
   jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   accessCookieName: process.env.ACCESS_COOKIE_NAME || 'task_access_token',
   refreshCookieName: process.env.REFRESH_COOKIE_NAME || 'task_refresh_token',
+  csrfCookieName: process.env.CSRF_COOKIE_NAME || 'task_csrf_token',
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
   rateLimitWindowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
   rateLimitMax: Number(process.env.RATE_LIMIT_MAX) || 300,

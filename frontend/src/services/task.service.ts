@@ -15,6 +15,9 @@ export const getTasks = (filters: TaskFilters) =>
     }
   });
 
+export const getTask = (taskId: string) =>
+  axiosClient.get<{ task: Task }>(ENDPOINTS.tasks.byId(taskId));
+
 export const createTask = (input: TaskInput) =>
   axiosClient.post<{ task: Task }>(ENDPOINTS.tasks.create, input);
 

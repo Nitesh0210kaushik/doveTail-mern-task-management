@@ -1,5 +1,6 @@
 export const ENDPOINTS = {
   auth: {
+    csrf: '/auth/csrf',
     register: '/auth/register',
     login: '/auth/login',
     refresh: '/auth/refresh',

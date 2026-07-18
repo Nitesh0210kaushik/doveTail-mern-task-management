@@ -1,8 +1,7 @@
 import type { ParamsDictionary } from 'express-serve-static-core';
 import type { Request, Response } from 'express';
 import { asyncHandler } from '../../../utils/asyncHandler';
-import { getCurrentUser, loginUser, registerUser } from '../services/auth.service';
-import { logoutUser, refreshUserSession } from '../services/auth.service';
+import { getCurrentUser, loginUser, logoutUser, refreshUserSession, registerUser } from '../services/auth.service';
 import { env } from '../../../config/env';
 import { ApiError } from '../../../utils/ApiError';
 import type { AuthData, AuthSessionData, LoginRequest, RegisterRequest, SafeUser } from '../types/auth.types';

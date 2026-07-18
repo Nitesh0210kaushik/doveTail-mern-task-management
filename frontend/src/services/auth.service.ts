@@ -13,3 +13,6 @@ export const getCurrentUser = () =>
 
 export const logoutUser = () =>
   axiosClient.post(ENDPOINTS.auth.logout);
+
+export const getCsrfToken = () =>
+  axiosClient.get(ENDPOINTS.auth.csrf);

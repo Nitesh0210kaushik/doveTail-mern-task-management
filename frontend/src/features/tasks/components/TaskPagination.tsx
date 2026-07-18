@@ -18,8 +18,8 @@ export default function TaskPagination({ pagination, onPageChange }: TaskPaginat
   const pages = Array.from({ length: pagination.totalPages }, (_, index) => index + 1);
 
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
-      <p className="text-sm text-slate-500">{pagination.totalRecords} tasks</p>
+    <div className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4 dark:border-slate-800 dark:bg-slate-900">
+      <p className="shrink-0 text-sm text-slate-500 dark:text-slate-300">{pagination.totalRecords} tasks</p>
       <Pagination>
         <PaginationContent>
           <PaginationItem>

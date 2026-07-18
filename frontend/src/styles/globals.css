@@ -4,6 +4,6 @@
 
 @layer base {
   body {
-    @apply m-0 min-w-[320px] font-sans antialiased;
+    @apply m-0 min-w-[320px] bg-white font-sans antialiased dark:bg-slate-950;
   }
 }

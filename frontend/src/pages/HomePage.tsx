@@ -1,30 +1,40 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { ArrowRight, ArrowUpRight, Check, MoreHorizontal, Plus, ShieldCheck, TrendingUp, type LucideIcon } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { useCurrentUser } from '../hooks/auth/useCurrentUser';
 
-const features = [
+const features: { icon: LucideIcon; title: string; text: string }[] = [
   {
-    icon: '✓',
+    icon: Check,
     title: 'Stay organized',
     text: 'Keep every task, deadline, and priority in one clear workspace.'
   },
   {
-    icon: '↗',
+    icon: ArrowUpRight,
     title: 'Move faster',
     text: 'Focus on the work that matters with simple, distraction-free planning.'
   },
   {
-    icon: '◈',
+    icon: ShieldCheck,
     title: 'Work with confidence',
     text: 'Your tasks are private, secure, and always available when you need them.'
   }
 ];
 
 export default function HomePage() {
+  const { isLoading, isSuccess } = useCurrentUser();
+
+  if (isLoading) {
+    return <main className="flex min-h-screen items-center justify-center bg-slate-950 text-sm text-slate-400">Loading...</main>;
+  }
+
+  if (isSuccess) return <Navigate to="/dashboard" replace />;
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
       <div className="pointer-events-none absolute left-1/2 top-[-20rem] h-[42rem] w-[42rem] -translate-x-1/2 rounded-full bg-blue-600/20 blur-3xl" />
       <div className="pointer-events-none absolute right-[-12rem] top-1/3 h-[30rem] w-[30rem] rounded-full bg-indigo-500/10 blur-3xl" />
-      <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between border-b border-white/10 px-6 py-6 lg:px-8">
+      <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between border-b border-white/10 px-6 py-4 lg:px-8">
         <Link className="text-lg font-bold tracking-[0.25em] text-blue-400" to="/">
           TASKFLOW
         </Link>
@@ -38,9 +48,9 @@ export default function HomePage() {
         </div>
       </nav>
 
-      <section className="relative mx-auto grid max-w-7xl items-center gap-16 px-6 pb-24 pt-20 lg:grid-cols-[1fr_0.85fr] lg:px-8 lg:pb-32 lg:pt-28">
+      <section className="relative mx-auto grid max-w-7xl items-center gap-8 px-6 pb-10 pt-8 lg:grid-cols-[1fr_0.85fr] lg:gap-10 lg:px-8 lg:pb-12 lg:pt-10">
         <div className="relative z-10">
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-400/10 px-4 py-2 text-sm text-blue-200">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-400/10 px-4 py-2 text-sm text-blue-200">
             <span className="h-2 w-2 rounded-full bg-blue-400" />
             A calmer way to manage your work
           </div>
@@ -50,24 +60,24 @@ export default function HomePage() {
               clear progress.
             </span>
           </h1>
-          <p className="mt-7 max-w-xl text-lg leading-8 text-slate-400">
+          <p className="mt-5 max-w-xl text-lg leading-8 text-slate-400">
             TaskFlow gives you a simple, focused space to plan your priorities,
             track progress, and finish what matters.
           </p>
-          <div className="mt-9 flex flex-wrap items-center gap-4">
+          <div className="mt-7 flex flex-wrap items-center gap-4">
             <Link to="/register">
               <Button size="default" className="px-7 py-3.5">Create your free account</Button>
             </Link>
             <Link className="text-sm font-semibold text-slate-300 transition hover:text-white" to="/login">
-              Already have an account? <span className="text-blue-400">Sign in →</span>
+              Already have an account? <span className="inline-flex items-center gap-1 text-blue-400">Sign in <ArrowRight className="h-4 w-4" /></span>
             </Link>
           </div>
         </div>
 
         <div className="relative">
           <div className="absolute -inset-10 rounded-full bg-blue-600/20 blur-3xl" />
-          <div className="relative rounded-[2rem] border border-white/15 bg-white/[0.08] p-3 shadow-2xl shadow-blue-950/50 backdrop-blur-xl">
-            <div className="rounded-[1.5rem] bg-slate-900/95 p-5">
+          <div className="relative rounded-[2rem] border border-white/15 bg-white/[0.08] p-2 shadow-2xl shadow-blue-950/50 backdrop-blur-xl">
+            <div className="rounded-[1.5rem] bg-slate-900/95 p-4">
               <div className="flex items-center justify-between border-b border-white/10 pb-5">
                 <div>
                   <p className="text-xs font-medium text-slate-500">MY WORKSPACE</p>
@@ -78,7 +88,7 @@ export default function HomePage() {
                   <span className="text-xs font-medium text-slate-400">Live workspace</span>
                 </div>
               </div>
-              <div className="mt-5 grid grid-cols-2 gap-3">
+              <div className="mt-4 grid grid-cols-2 gap-3">
                 <div className="rounded-xl bg-blue-500/10 p-4">
                   <p className="text-xs text-slate-500">Completed</p>
                   <p className="mt-1 text-2xl font-bold text-blue-300">68%</p>
@@ -87,27 +97,27 @@ export default function HomePage() {
                 <div className="rounded-xl bg-emerald-500/10 p-4">
                   <p className="text-xs text-slate-500">This week</p>
                   <p className="mt-1 text-2xl font-bold text-emerald-300">24</p>
-                  <p className="mt-2 text-xs text-emerald-300">↑ 12% from last week</p>
+                  <p className="mt-2 inline-flex items-center gap-1 text-xs text-emerald-300"><TrendingUp className="h-3.5 w-3.5" />12% from last week</p>
                 </div>
               </div>
-              <div className="space-y-3 pt-5">
+              <div className="space-y-2 pt-4">
                 {[
                   ['Review product feedback', 'In Progress', 'blue'],
                   ['Prepare weekly priorities', 'Pending', 'amber'],
                   ['Send project update', 'Completed', 'emerald']
                 ].map(([title, status, color]) => (
                   <div className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.04] p-4" key={title}>
-                    <span className={color === 'emerald' ? 'flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/20 text-xs text-emerald-300' : 'h-5 w-5 rounded-full border border-slate-600'}>{color === 'emerald' ? '✓' : ''}</span>
+                    <span className={color === 'emerald' ? 'flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/20 text-emerald-300' : 'h-5 w-5 rounded-full border border-slate-600'}>{color === 'emerald' && <Check className="h-3 w-3" />}</span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-slate-200">{title}</p>
                       <p className={color === 'blue' ? 'mt-1 text-xs text-blue-300' : color === 'amber' ? 'mt-1 text-xs text-amber-300' : 'mt-1 text-xs text-emerald-300'}>{status}</p>
                     </div>
-                    <span className="text-slate-600">•••</span>
+                    <MoreHorizontal className="h-4 w-4 text-slate-600" />
                   </div>
                 ))}
               </div>
-              <div className="mt-5 rounded-xl border border-dashed border-slate-700 p-4 text-center text-sm text-slate-500">
-                + Add a new task
+              <div className="mt-4 rounded-xl border border-dashed border-slate-700 p-3 text-center text-sm text-slate-500">
+                <span className="inline-flex items-center gap-2"><Plus className="h-4 w-4" />Add a new task</span>
               </div>
             </div>
           </div>
@@ -115,10 +125,10 @@ export default function HomePage() {
       </section>
 
       <section className="border-y border-white/5 bg-white/[0.03]">
-        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-12 sm:grid-cols-3 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-5 px-6 py-6 sm:grid-cols-3 lg:px-8">
           {features.map((feature) => (
             <div className="flex gap-4" key={feature.title}>
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/15 text-lg text-blue-300">{feature.icon}</span>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/15 text-blue-300"><feature.icon className="h-5 w-5" /></span>
               <div>
                 <h3 className="font-semibold">{feature.title}</h3>
                 <p className="mt-1 text-sm leading-6 text-slate-500">{feature.text}</p>
@@ -128,7 +138,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-20 text-center lg:px-8">
+      <section className="mx-auto max-w-7xl px-6 py-8 text-center lg:px-8">
         <p className="text-sm font-semibold uppercase tracking-[0.25em] text-blue-400">Make space for progress</p>
         <h2 className="mx-auto mt-4 max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl">
           Your next productive day starts here.

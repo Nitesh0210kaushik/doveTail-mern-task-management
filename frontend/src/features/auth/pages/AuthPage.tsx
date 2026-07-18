@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { useAuth } from '../../../hooks/auth/useAuth';
+import { useCurrentUser } from '../../../hooks/auth/useCurrentUser';
 import type { AuthMode } from '../types/auth.types';
 import { getCsrfToken } from '../../../services/auth.service';
 
@@ -21,6 +22,13 @@ export default function AuthPage({ mode }: AuthPageProps) {
   const [formError, setFormError] = useState('');
   const [csrfReady, setCsrfReady] = useState(false);
   const { login, register, loading, error } = useAuth();
+  const { isLoading: sessionLoading, isSuccess: isAuthenticated } = useCurrentUser();
+
+  useEffect(() => {
+    if (!sessionLoading && isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate, sessionLoading]);
 
   useEffect(() => {
     void getCsrfToken().then(() => setCsrfReady(true));
